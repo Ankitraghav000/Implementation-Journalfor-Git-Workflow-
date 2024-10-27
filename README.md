@@ -147,10 +147,21 @@ fi
 ```
 - Push changes to remote
 ```
+# Step 7: Push to remote 
 echo "Do you want to push your changes to the remote repository? (y/n)"
 read -r push_to_remote
+
 if [ "$push_to_remote" = "y" ]; then
     git push origin "$(git branch --show-current)"
+
+    # Check if the last command was successful
+    if [ $? -eq 0 ]; then
+        echo "Automation completed!"
+    else
+        echo "Automation not completed: push failed."
+    fi
+else
+    echo "Push to remote repository was skipped."
 fi
 ```
 The git pull command updates the local repository with any new changes from the remote repository.
