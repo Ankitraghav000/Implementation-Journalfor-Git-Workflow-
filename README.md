@@ -43,7 +43,7 @@ An active internet connection is required for cloning repositories and pushing t
 You should have access to a Git repository (either public or private) to test the script.
 ## Step-by-Step Implementation
 ### 1. Script Setup
-The script is written in Bash and designed to run on Unix-based systems (Linux/macOS). It begins by asking the user to enter a Git repository link for cloning.
+The script is written in Bash and designed to run on Unix-based systems (Linux). It begins by asking the user to enter a Git repository link for cloning.
 
 ```
 echo "Enter the Git repository link to clone:"
