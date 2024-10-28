@@ -46,11 +46,35 @@ You should have access to a Git repository (either public or private) to test th
 The script is written in Bash and designed to run on Unix-based systems (Linux). It begins by asking the user to enter a Git repository link for cloning.
 
 ```
+#!/bin/bash
+
+# Function to display branches
+function list_branches {
+    echo "Available branches:"
+    git branch
+}
+
+# Function to edit file in Vim
+function edit_file_in_vim {
+    echo "Select file to edit (provide full name with extension):"
+    ls
+    read -r file_name
+    vim "$file_name"
+}
+
+# Step 1: Clone the repository
 echo "Enter the Git repository link to clone:"
 read -r repo_link
 git clone "$repo_link"
+
+# Extract the repository name from the URL
 repo_name=$(basename "$repo_link" .git)
+
+# Navigate into the cloned repository directory
 cd "$repo_name" || exit
+
+# Confirm to the user that they are in the cloned repository directory
+echo "Now you are in the $repo_name repository."
 ```
 The git clone command clones the provided repository URL.
 The script extracts the repository name from the URL and navigates into the cloned repository's directory using cd.
@@ -58,6 +82,7 @@ The script extracts the repository name from the URL and navigates into the clon
 After cloning, the script prompts the user to create a file. If the user chooses to create one, the script asks for the filename and opens it in Visual Studio Code for editing.
 
 ```
+# Step 2: Ask to create a new file
 echo "Do you want to create a new file? (y/n)"
 read -r create_file
 if [ "$create_file" = "y" ]; then
@@ -65,7 +90,7 @@ if [ "$create_file" = "y" ]; then
     read -r file_name
     touch "$file_name"
     code "$file_name"
-    
+
     echo "Did you complete adding code in Visual Studio Code? (y/n)"
     read -r completed_code
     if [ "$completed_code" = "y" ]; then
@@ -75,12 +100,14 @@ if [ "$create_file" = "y" ]; then
         git commit -m "$commit_message"
     fi
 fi
+
 ```
 If a file is created, the script opens it in Visual Studio Code with code "$file_name".
 Once the user confirms that they’ve finished editing, the script stages the file with git add and commits the changes with a user-provided commit message.
 ### 3. Creating and Switching Branches
 The script then prompts the user to create a new branch. It switches to the new branch and opens a file in Vim for further edits.
 ```
+# Step 3: Branch creation and switching
 echo "Do you want to create a new branch? (y/n)"
 read -r create_branch
 if [ "$create_branch" = "y" ]; then
@@ -88,6 +115,7 @@ if [ "$create_branch" = "y" ]; then
     read -r branch_name
     git checkout -b "$branch_name"
     edit_file_in_vim
+
     git add .
     echo "Enter a commit message for changes in $branch_name:"
     read -r commit_message
@@ -99,6 +127,7 @@ The script uses Vim as the editor in this step, but you can change this to anoth
 ### 4. Multiple Branch Creation and Commit Flow
 The script loops, allowing the user to create more branches, make changes in the selected files, and commit the changes for each branch.
 ```
+# Step 4: Option to create another branch and edit
 while true; do
     echo "Do you want to create another branch? (y/n)"
     read -r create_another_branch
@@ -121,6 +150,7 @@ This loop keeps offering the user the chance to create more branches and work on
 After the branching process, the script asks whether the user wants to merge branches. It lists all available branches and merges the specified branch into the base branch (usually main or master).
 
 ```
+# Step 5: Merging branches
 echo "Do you want to merge branches? (y/n)"
 read -r merge_branches
 if [ "$merge_branches" = "y" ]; then
@@ -128,26 +158,29 @@ if [ "$merge_branches" = "y" ]; then
     echo "Enter the branch you want to merge into (typically 'main' or 'master'):"
     read -r base_branch
     git checkout "$base_branch"
+
     echo "Enter the branch you want to merge from:"
     read -r branch_to_merge
     git merge "$branch_to_merge" -m "Merging $branch_to_merge into $base_branch"
 fi
+
 ```
 The git merge command is used to integrate changes from one branch into another.
-### 6. Pulling and Pushing Changes
+### 6. Pulling Changes
 The final steps involve pulling updates from the remote repository and pushing the changes made locally back to the remote.
 
 ```
-# Pull latest changes
+# Step 6: Pull the latest changes
 echo "Do you want to pull the latest changes from remote? (y/n)"
 read -r pull_changes
 if [ "$pull_changes" = "y" ]; then
     git pull origin "$(git branch --show-current)"
 fi
 ```
-- Push changes to remote
+### Step 7: Push to remote 
+
 ```
-# Step 7: Push to remote 
+### Step 7: Push to remote 
 echo "Do you want to push your changes to the remote repository? (y/n)"
 read -r push_to_remote
 
